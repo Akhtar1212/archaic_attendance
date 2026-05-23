@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Portal Pegawai - Archaic Coffee</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+  <style>
+    :root {
+      --bg: #040404;
+      --bg-soft: #111111;
+      --card: #121212;
+      --gold: #D4AF37;
+      --light: #f5f5f5;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #202020 0%, #050505 55%, #000 100%);
+      color: var(--light);
+      min-height: 100vh;
+    }
+
+    /* ===== TOP BAR (Back + Logout di pojok kanan atas) ===== */
+    .top-bar {
+      position: fixed;
+      top: 20px;
+      right: 24px;
+      z-index: 40;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .btn-pill-outline {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 24px;
+      border-radius: 999px;
+      border: 1px solid var(--gold);
+      background: transparent;
+      color: var(--gold);
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease,
+                  transform 0.05s ease;
+      box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+    }
+
+    .btn-pill-outline:hover {
+      background: var(--gold);
+      color: #111;
+      box-shadow: 0 0 16px rgba(212, 175, 55, 0.45);
+      transform: translateY(-1px);
+    }
+
+    .btn-pill-outline:active {
+      transform: translateY(0);
+      box-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
+    }
+
+    /* ===== LOGIN LAYOUT (SAMA SEPERTI LOGIN ADMIN) ===== */
+    .login-wrapper {
+      width: 100%;
+      min-height: 100vh;
+      box-sizing: border-box;
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .login-card {
+      width: 360px;
+      max-width: 94vw;
+      background: linear-gradient(145deg, #151515 0%, #090909 60%);
+      border-radius: 16px;
+      box-shadow:
+        0 26px 70px rgba(0, 0, 0, 0.85),
+        0 0 0 1px rgba(255, 255, 255, 0.02);
+      padding: 26px 26px 22px;
+      text-align: center;
+      position: relative;
+    }
+
+    .login-logo {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      margin: 0 auto 10px;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 22px rgba(212, 175, 55, 0.35);
+    }
+
+    .login-logo img {
+      max-width: 42px;
+      max-height: 42px;
+      display: block;
+    }
+
+    .login-title {
+      margin: 4px 0 6px;
+      font-size: 1.3rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+    }
+
+    .login-subtitle {
+      font-size: 0.82rem;
+      color: #bbbbbb;
+      margin-bottom: 14px;
+    }
+
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .login-input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 9px 11px;
+      border-radius: 10px;
+      border: 1px solid #262626;
+      background: #101010;
+      color: #f7f7f7;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+
+    .login-input::placeholder {
+      color: #777;
+    }
+
+    .login-input:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.45);
+      background: #111111;
+    }
+
+    .btn-gold {
+      margin-top: 4px;
+      width: 100%;
+      padding: 9px 0;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, #f4ce63 0%, #d4af37 40%, #b78a1e 100%);
+      color: #111;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      box-shadow:
+        0 10px 25px rgba(0, 0, 0, 0.9),
+        0 0 16px rgba(212, 175, 55, 0.6);
+      transition: transform 0.05s ease, box-shadow 0.15s ease, filter 0.15s ease;
+    }
+
+    .btn-gold:hover {
+      filter: brightness(1.04);
+      box-shadow:
+        0 16px 32px rgba(0, 0, 0, 0.95),
+        0 0 22px rgba(212, 175, 55, 0.7);
+      transform: translateY(-1px);
+    }
+
+    .btn-gold:active {
+      transform: translateY(0);
+      box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.9),
+        0 0 18px rgba(212, 175, 55, 0.6);
+    }
+
+    .login-error {
+      background:#3b1c1c;
+      border:1px solid #8b2d2d;
+      color:#f8d7da;
+      padding:6px 10px;
+      border-radius:8px;
+      font-size:0.8rem;
+      margin-bottom:8px;
+      text-align:left;
+    }
+
+    @media (max-width: 480px) {
+      .top-bar {
+        right: 14px;
+        top: 14px;
+      }
+      .login-card {
+        padding: 22px 20px 18px;
+      }
+    }
+
+    /* ======== LAYOUT KHUSUS PORTAL PEGAWAI (SETELAH LOGIN) ======== */
+
+    #appLayout {
+      max-width: 1200px;
+      margin: 20px auto 40px;
+      padding: 0 12px 40px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 10px;
+      padding: 10px 0 4px;
+      box-sizing: border-box;
+    }
+
+    header h2 {
+      margin: 0;
+      font-size: 1.2rem;
+    }
+
+    main {
+      margin-top: 4px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      gap: 18px;
+      align-items: flex-start;
+    }
+    .section-title {
+      margin: 0 0 10px;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1.1rem;
+    }
+    .section-title span.icon {
+      font-size: 1.2rem;
+      opacity: 0.9;
+    }
+    .camera-card {
+      border-radius: 14px;
+      background: #121212;
+      padding: 16px 16px 12px;
+      box-shadow: 0 0 18px rgba(0,0,0,0.65);
+    }
+    .cam-wrapper {
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid #2a2a2a;
+      margin-bottom: 10px;
+      background: radial-gradient(circle at top, #333 0%, #000 60%);
+    }
+    .cam-wrapper img {
+      display: block;
+      width: 100%;
+      height: 320px;
+      object-fit: cover;
+    }
+    .cam-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-size: .9rem;
+      color: #aaa;
+    }
+    .status-pill {
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid #2a2a2a;
+      font-size: .8rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .status-pill dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      display: inline-block;
+    }
+    .status-ready dot { background: #16c784; }
+    .status-wait dot  { background: #f0c419; }
+    .status-error dot { background: #e74c3c; }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      margin-top: 6px;
+    }
+
+    .small-note {
+      font-size: 0.8rem;
+      color: #aaa;
+      margin-top: 4px;
+    }
+
+    /* DASHBOARD MINI CARDS */
+    .mini-cards {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 8px;
+      margin-bottom: 8px;
+    }
+    .mini-card {
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: linear-gradient(135deg, #181818 0%, #111 60%);
+      border: 1px solid #262626;
+    }
+    .mini-label {
+      font-size: 0.75rem;
+      color: #999;
+      margin-bottom: 4px;
+    }
+    .mini-value {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--light);
+    }
+    .mini-sub {
+      font-size: 0.75rem;
+      color: #ccc;
+      margin-top: 2px;
+    }
+
+    /* TABEL LOG */
+    .table-wrap {
+      margin-top: 10px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid #252525;
+    }
+    table.rekap {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    table.rekap th, table.rekap td {
+      border: 1px solid #2a2a2a;
+      padding: 6px 8px;
+      text-align: left;
+    }
+    table.rekap th {
+      background: #181818;
+      color: var(--gold);
+    }
+    table.rekap tr:nth-child(even) td {
+      background: #131313;
+    }
+
+    /* FORM IZIN */
+    .form-vertical {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .form-vertical label {
+      font-size: .8rem;
+      color: #ccc;
+      text-align: left;
+    }
+    .form-vertical textarea {
+      background: #1a1a1a;
+      color: #fff;
+      border-radius: 8px;
+      border: 1px solid #2a2a2a;
+      padding: 8px 10px;
+      min-height: 70px;
+      resize: vertical;
+      font-family: inherit;
+      font-size: .85rem;
+    }
+
+    /* LEADERBOARD */
+    .leaderboard-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 6px;
+    }
+    .lb-item {
+      border-radius: 10px;
+      padding: 8px 10px;
+      background: #151515;
+      border: 1px solid #262626;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: .85rem;
+    }
+    .lb-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .lb-rank {
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .8rem;
+      font-weight: 600;
+      background: #222;
+      color: var(--gold);
+    }
+    .lb-me {
+      border-color: var(--gold);
+      box-shadow: 0 0 12px rgba(212,175,55,.3);
+    }
+    .lb-main {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .lb-name {
+      font-weight: 500;
+    }
+    .lb-role {
+      font-size: .75rem;
+      color: #aaa;
+    }
+    .lb-score {
+      font-size: .8rem;
+      color: #ddd;
+    }
+
+    /* POPUP dari style.css tetap dipakai */
+    #popup {
+      z-index: 999;
+    }
+
+    @media (max-width: 900px) {
+      .grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .cam-wrapper img {
+        height: 260px;
+      }
+      .mini-cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+    @media (max-width: 580px) {
+      .mini-cards {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top bar: selalu di pojok kanan atas -->
+  <div class="top-bar">
+    <a href="{{ url_for('home') }}" class="btn-pill-outline">Kembali</a>
+    <button type="button" class="btn-pill-outline" onclick="logoutPegawai()">Logout</button>
+  </div>
+
+  <!-- ========== LOGIN LAYOUT (PERSIS GAYA LOGIN ADMIN) ========== -->
+  <div id="loginLayout" class="login-wrapper">
+    <div class="login-card">
+      <div class="login-logo">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Archaic Coffee">
+      </div>
+      <h1 class="login-title">Portal Pegawai</h1>
+      <div class="login-subtitle">
+        Masuk menggunakan akun yang sudah diberikan admin.
+      </div>
+
+      <div id="loginError" class="login-error" style="display:none;"></div>
+
+      <div class="login-form">
+        <input
+          type="text"
+          id="loginUser"
+          class="login-input"
+          placeholder="Username"
+          autocomplete="username"
+        >
+        <input
+          type="password"
+          id="loginPass"
+          class="login-input"
+          placeholder="Password"
+          autocomplete="current-password"
+        >
+        <button type="button" class="btn-gold" onclick="doLogin()">Login</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== APP LAYOUT (SETELAH LOGIN) ========== -->
+  <div id="appLayout" style="display:none;">
+    <header>
+      <img src="{{ url_for('static', filename='logo.png') }}" class="logo-small" alt="Archaic" style="width:38px; height:38px; border-radius:10px;">
+      <div>
+        <h2>Portal Pegawai</h2>
+        <div id="headerUser" style="font-size:0.8rem; color:#aaa;">Memuat data pegawai...</div>
+      </div>
+    </header>
+
+    <main>
+      <div class="grid">
+        <!-- KIRI: Kamera + Log Presensi -->
+        <div>
+          <!-- CAMERA & ABSEN -->
+          <div class="camera-card">
+            <h3 class="section-title">
+              <span class="icon">📷</span> Live Camera & Presensi
+            </h3>
+            <div class="cam-wrapper">
+              <img id="camStream" src="" alt="Camera stream">
+            </div>
+            <div class="cam-footer">
+              <div class="status-pill status-wait" id="camStatusPill">
+                <dot></dot>
+                <span id="camStatusText">Kamera belum aktif</span>
+              </div>
+              <div style="font-size:.78rem; color:#999;">
+                Tips: posisikan wajah jelas, tidak terlalu jauh, dan cahaya cukup.
+              </div>
+            </div>
+            <div class="btn-row">
+              <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <button class="btn gold" onclick="startCamera()">Aktifkan Kamera</button>
+                <button class="btn" onclick="doAbsen()">Absen Sekarang</button>
+              </div>
+              <div style="font-size:.75rem; color:#aaa;">
+                <span id="lastAbsenInfo">Belum ada aksi.</span>
+              </div>
+            </div>
+            <div class="small-note">
+              Sistem akan menentukan otomatis apakah ini <b>cek-in</b> atau <b>cek-out</b>,
+              mengikuti aturan jam kerja Archaic Coffee.
+            </div>
+          </div>
+
+          <!-- LOG PRESENSI -->
+          <div class="card" style="margin-top:16px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+              <h3 class="section-title" style="margin-bottom:0;">
+                <span class="icon">📅</span> Log Presensi Bulan Ini
+              </h3>
+              <div class="form-inline" style="justify-content:flex-end;">
+                <input type="month" id="bulanLog" style="max-width:160px;">
+                <button class="btn" onclick="loadMyRekap()">Muat</button>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table class="rekap" id="myLogTable">
+                <tr>
+                  <th>Tanggal</th>
+                  <th>Masuk</th>
+                  <th>Pulang</th>
+                  <th>Status</th>
+                </tr>
+                <tr><td colspan="4">Memuat...</td></tr>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- KANAN: Statistik + Izin + Leaderboard -->
+        <div>
+          <!-- STATISTIK PRIBADI -->
+          <div class="card">
+            <h3 class="section-title">
+              <span class="icon">📊</span> Ringkasan Presensi Pribadi
+            </h3>
+            <div class="mini-cards">
+              <div class="mini-card">
+                <div class="mini-label">Hari Hadir</div>
+                <div class="mini-value" id="statPresent">-</div>
+                <div class="mini-sub" id="statLateCount">Terlambat: - kali</div>
+              </div>
+              <div class="mini-card">
+                <div class="mini-label">Total Jam Kerja</div>
+                <div class="mini-value" id="statWorkHms">-</div>
+                <div class="mini-sub" id="statAvgIn">Rata-rata masuk: -</div>
+              </div>
+              <div class="mini-card">
+                <div class="mini-label">Rata-rata Pulang</div>
+                <div class="mini-value" id="statAvgOut">-</div>
+                <div class="mini-sub" id="statLateMinutes">Total telat: - menit</div>
+              </div>
+            </div>
+            <div class="small-note">
+              Data di atas berdasarkan bulan yang dipilih.
+            </div>
+          </div>
+
+          <!-- FORM IZIN / CUTI / TERLAMBAT -->
+          <div class="card" style="margin-top:16px;">
+            <h3 class="section-title">
+              <span class="icon">📝</span> Pengajuan Izin / Cuti / Terlambat
+            </h3>
+            <div class="form-vertical">
+              <label for="tanggalIzin">Tanggal</label>
+              <input type="date" id="tanggalIzin">
+              <label for="jenisIzin">Jenis</label>
+              <select id="jenisIzin">
+                <option value="Izin">Izin</option>
+                <option value="Cuti">Cuti</option>
+                <option value="Terlambat">Terlambat</option>
+              </select>
+              <label for="alasanIzin">Alasan (opsional)</label>
+              <textarea id="alasanIzin" placeholder="Tulis alasan singkat..."></textarea>
+              <button class="btn gold" onclick="submitIzin()">Kirim Pengajuan</button>
+            </div>
+            <div class="small-note">
+              Admin akan meninjau pengajuan kamu melalui portal admin.
+            </div>
+          </div>
+
+          <!-- LEADERBOARD -->
+          <div class="card" style="margin-top:16px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+              <h3 class="section-title" style="margin-bottom:0;">
+                <span class="icon">🏆</span> Leaderboard Disiplin Bulan Ini
+              </h3>
+              <input type="month" id="bulanLb" style="max-width:150px;">
+            </div>
+            <div class="leaderboard-list" id="lbList">
+              <div style="font-size:.85rem; color:#aaa;">Memuat leaderboard...</div>
+            </div>
+            <div class="small-note">
+              Ranking berdasarkan kombinasi kehadiran, ketepatan waktu, dan total menit keterlambatan.
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Popup notification (pakai yang dari style.css) -->
+  <div id="popup" class="popup"></div>
+
+  <div class="steam-corner">
+    <span></span><span></span><span></span>
+  </div>
+
+<script>
+  // ========== UTIL NOTIF ==========
+  function showNotif(msg){
+    const p = document.getElementById('popup');
+    if(!p){ alert(msg); return; }
+    p.textContent = msg;
+    p.style.display = 'block';
+    setTimeout(()=>{ p.style.display='none'; }, 2500);
+  }
+
+  // Tombol kembali ke pilihan portal (sama dengan admin login)
+  function goBackToPortal() {
+    window.location.href = "{{ url_for('home') }}";
+  }
+
+  // ========== STATE GLOBAL ==========
+  let currentUser = null;
+  let currentMonth = new Date().toISOString().slice(0,7);
+  let camStarted = false;
+
+  // ========== LOGIN LOGIC ==========
+  function initPage(){
+    const bulanInputs = ['bulanLog','bulanLb'];
+    bulanInputs.forEach(id=>{
+      const el = document.getElementById(id);
+      if(el){ el.value = currentMonth; }
+    });
+
+    fetch('/me')
+      .then(r=>r.json())
+      .then(d=>{
+        if(d.logged_in){
+          currentUser = { id: d.id, nama: d.nama, jabatan: d.jabatan };
+          const hu = document.getElementById('headerUser');
+          if (hu){
+            hu.textContent = d.nama ? (d.nama + " • " + (d.jabatan || "")) : "Pegawai Archaic";
+          }
+          document.getElementById('loginLayout').style.display = 'none';
+          document.getElementById('appLayout').style.display = 'block';
+          afterLoginLoad();
+        } else {
+          currentUser = null;
+          const hu = document.getElementById('headerUser');
+          if (hu){ hu.textContent = "Belum login"; }
+          document.getElementById('loginLayout').style.display = 'flex';
+          document.getElementById('appLayout').style.display = 'none';
+        }
+      })
+      .catch(()=>{
+        const hu = document.getElementById('headerUser');
+        if (hu){ hu.textContent = "Gagal memuat sesi"; }
+        document.getElementById('loginLayout').style.display = 'flex';
+        document.getElementById('appLayout').style.display = 'none';
+      });
+  }
+
+  function doLogin(){
+    const u = document.getElementById('loginUser').value.trim();
+    const p = document.getElementById('loginPass').value;
+    const err = document.getElementById('loginError');
+    err.style.display = 'none';
+    if(!u || !p){
+      err.textContent = "Username dan password wajib diisi";
+      err.style.display = 'block';
+      return;
+    }
+    fetch('/auth/pegawai/login',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({username:u,password:p})
+    }).then(r=>r.json()).then(d=>{
+      if(!d.ok){
+        err.textContent = d.error || "Login gagal";
+        err.style.display = 'block';
+        return;
+      }
+      showNotif("Login berhasil. Selamat bekerja, " + (d.nama || d.id) + "!");
+      initPage();
+    }).catch(()=>{
+      err.textContent = "Terjadi kesalahan jaringan";
+      err.style.display = 'block';
+    });
+  }
+
+  function logoutPegawai(){
+    fetch('/auth/pegawai/logout',{method:'POST'})
+      .then(()=>{ window.location.reload(); });
+  }
+
+  // ========== SETELAH LOGIN ==========
+  function afterLoginLoad(){
+    loadMyRekap();
+    loadMyStats();
+    loadLeaderboard();
+    // Set default tanggal izin = hari ini
+    const today = new Date().toISOString().slice(0,10);
+    const tIzin = document.getElementById('tanggalIzin');
+    if(tIzin && !tIzin.value){ tIzin.value = today; }
+  }
+
+  // ========== CAMERA ==========
+  function setCamStatus(text, type){
+    const pill = document.getElementById('camStatusPill');
+    const span = document.getElementById('camStatusText');
+    if(span) span.textContent = text || '';
+    pill.classList.remove('status-ready','status-wait','status-error');
+    if(type === 'ready') pill.classList.add('status-ready');
+    else if(type === 'error') pill.classList.add('status-error');
+    else pill.classList.add('status-wait');
+  }
+
+  function startCamera(){
+    if(camStarted){
+      showNotif("Kamera sudah aktif.");
+      return;
+    }
+    setCamStatus("Menghubungkan kamera...", "wait");
+    // Kiosk PIN harus sudah di-unlock di admin (kita anggap sudah)
+    fetch('/camera/start_public',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({index:0})
+    }).then(r=>r.json()).then(d=>{
+      if(!d.ok){
+        setCamStatus(d.error || "Gagal mengakses kamera", "error");
+        showNotif(d.error || "Gagal mengakses kamera");
+        return;
+      }
+      camStarted = true;
+      const img = document.getElementById('camStream');
+      img.src = "/camera/live?ts=" + Date.now();
+      setCamStatus("Kamera aktif", "ready");
+      showNotif("Kamera aktif. Siap presensi.");
+    }).catch(()=>{
+      setCamStatus("Gagal mengakses kamera", "error");
+      showNotif("Tidak bisa mengakses kamera.");
+    });
+  }
+
+  function doAbsen(){
+    if(!camStarted){
+      showNotif("Aktifkan kamera dulu.");
+      return;
+    }
+    const lastInfo = document.getElementById('lastAbsenInfo');
+    lastInfo.textContent = "Memproses pengenalan wajah...";
+    fetch('/recognize/once')
+      .then(r=>r.json())
+      .then(d=>{
+        if(d.error){
+          lastInfo.textContent = d.error;
+          showNotif(d.error);
+          return;
+        }
+        if(!d.recognized){
+          lastInfo.textContent = d.message || "Wajah tidak dikenali";
+          showNotif(d.message || "Wajah tidak dikenali");
+          return;
+        }
+        let msg = "";
+        if(d.action === 'check_in'){
+          msg = `Check-in ${d.status || ''} untuk ${d.nama || d.id}`;
+        } else if(d.action === 'check_out'){
+          msg = `Check-out berhasil untuk ${d.nama || d.id}`;
+        } else if(d.action === 'deny_checkout'){
+          msg = d.message || 'Belum boleh check-out';
+        } else if(d.action === 'already_done'){
+          msg = d.message || 'Hari ini sudah lengkap';
+        } else if(d.action === 'cooldown'){
+          msg = d.message || 'Tunggu sebentar sebelum absen lagi';
+        } else {
+          msg = 'Aksi tidak dikenal';
+        }
+        lastInfo.textContent = msg;
+        showNotif(msg);
+        // Refresh log & stats
+        loadMyRekap();
+        loadMyStats();
+      })
+      .catch(()=>{
+        lastInfo.textContent = "Terjadi kesalahan saat absen.";
+        showNotif("Terjadi kesalahan saat absen.");
+      });
+  }
+
+  // ========== LOG PRESENSI ==========
+  function loadMyRekap(){
+    const bulan = document.getElementById('bulanLog').value || currentMonth;
+    fetch('/my_rekap?month='+encodeURIComponent(bulan))
+      .then(r=>r.json())
+      .then(rows=>{
+        const t = document.getElementById('myLogTable');
+        t.innerHTML = `
+          <tr>
+            <th>Tanggal</th>
+            <th>Masuk</th>
+            <th>Pulang</th>
+            <th>Status</th>
+          </tr>`;
+        if(!rows || !rows.length){
+          t.innerHTML += `<tr><td colspan="4">Belum ada presensi pada bulan ini</td></tr>`;
+          return;
+        }
+        rows.forEach(r=>{
+          const tanggal = r[0];
+          const cin = r[1] || '-';
+          const cout = r[2] || '-';
+          const st = r[3] || '-';
+          let badge = st;
+          if(st === 'Tepat Waktu'){
+            badge = `<span style="color:#16c784; font-weight:500;">${st}</span>`;
+          } else if(st === 'Terlambat'){
+            badge = `<span style="color:#e74c3c; font-weight:500;">${st}</span>`;
+          }
+          t.innerHTML += `
+            <tr>
+              <td>${tanggal}</td>
+              <td>${cin}</td>
+              <td>${cout}</td>
+              <td>${badge}</td>
+            </tr>`;
+        });
+      })
+      .catch(()=>{
+        const t = document.getElementById('myLogTable');
+        t.innerHTML = `
+          <tr>
+            <th>Tanggal</th><th>Masuk</th><th>Pulang</th><th>Status</th>
+          </tr>
+          <tr><td colspan="4">Gagal memuat data</td></tr>`;
+      });
+  }
+
+  // ========== STATISTIK PRIBADI ==========
+  function loadMyStats(){
+    const bulan = document.getElementById('bulanLog').value || currentMonth;
+    fetch('/stats/my?month='+encodeURIComponent(bulan))
+      .then(r=>r.json())
+      .then(s=>{
+        if(s.error){
+          showNotif(s.error);
+          return;
+        }
+        document.getElementById('statPresent').textContent = s.present_days ?? '-';
+        document.getElementById('statLateCount').textContent =
+          'Terlambat: ' + (s.late ?? 0) + ' kali';
+        document.getElementById('statWorkHms').textContent = s.work_hms || '-';
+        document.getElementById('statAvgIn').textContent =
+          'Rata-rata masuk: ' + (s.avg_checkin || '-');
+        document.getElementById('statAvgOut').textContent = s.avg_checkout || '-';
+        document.getElementById('statLateMinutes').textContent =
+          'Total telat: ' + (s.late_minutes ?? 0) + ' menit';
+      })
+      .catch(()=>{
+        document.getElementById('statPresent').textContent = '-';
+        document.getElementById('statWorkHms').textContent = '-';
+      });
+  }
+
+  // ========== IZIN / CUTI / TERLAMBAT ==========
+  function submitIzin(){
+    if(!currentUser || !currentUser.id){
+      showNotif("Silakan login terlebih dahulu.");
+      return;
+    }
+    const tanggal = document.getElementById('tanggalIzin').value;
+    const jenis = document.getElementById('jenisIzin').value;
+    const alasan = document.getElementById('alasanIzin').value;
+    if(!tanggal || !jenis){
+      showNotif("Tanggal dan jenis pengajuan wajib diisi.");
+      return;
+    }
+    fetch('/izin/submit',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        id_pegawai: currentUser.id,
+        tanggal, jenis, alasan
+      })
+    }).then(r=>r.json()).then(d=>{
+      if(d.error){
+        showNotif(d.error);
+        return;
+      }
+      showNotif(d.message || "Pengajuan tersimpan");
+      document.getElementById('alasanIzin').value = '';
+    }).catch(()=>{
+      showNotif("Terjadi kesalahan saat mengirim pengajuan.");
+    });
+  }
+
+  // ========== LEADERBOARD ==========
+  function loadLeaderboard(){
+    const bulan = document.getElementById('bulanLb').value || currentMonth;
+    fetch('/leaderboard?month='+encodeURIComponent(bulan))
+      .then(r=>r.json())
+      .then(rows=>{
+        const wrap = document.getElementById('lbList');
+        wrap.innerHTML = '';
+        if(!rows || !rows.length){
+          wrap.innerHTML = `<div style="font-size:.85rem; color:#aaa;">
+            Belum ada data leaderboard untuk bulan ini.
+          </div>`;
+          return;
+        }
+        rows.slice(0,5).forEach((r,idx)=>{
+          const idp = r[0];
+          const nama = r[1] || '-';
+          const jab = r[2] || '-';
+          const score = r[3]; // sesuai dari db.leaderboard_month
+          const present_days = r[4];
+          const late = r[5];
+          const total_late = r[6];
+
+          const isMe = currentUser && currentUser.id === idp;
+          const rank = idx + 1;
+          let medal = '';
+          if(rank === 1) medal = '🥇';
+          else if(rank === 2) medal = '🥈';
+          else if(rank === 3) medal = '🥉';
+
+          const item = document.createElement('div');
+          item.className = 'lb-item' + (isMe ? ' lb-me' : '');
+          item.innerHTML = `
+            <div class="lb-left">
+              <div class="lb-rank">${medal || '#'+rank}</div>
+              <div class="lb-main">
+                <div class="lb-name">${nama} <span style="opacity:.7;">(${idp})</span></div>
+                <div class="lb-role">${jab}</div>
+              </div>
+            </div>
+            <div class="lb-score">
+              Skor: <b>${score}</b><br>
+              <span style="font-size:.75rem; opacity:.8;">
+                Hadir: ${present_days} • Telat: ${late}x • Telat: ${total_late} menit
+              </span>
+            </div>
+          `;
+          wrap.appendChild(item);
+        });
+      })
+      .catch(()=>{
+        const wrap = document.getElementById('lbList');
+        wrap.innerHTML = `<div style="font-size:.85rem; color:#aaa;">
+          Gagal memuat leaderboard.
+        </div>`;
+      });
+  }
+
+  // ========== EVENT LISTENER ==========
+  window.addEventListener('load', initPage);
+  document.getElementById('bulanLb').addEventListener('change', loadLeaderboard);
+  document.getElementById('bulanLog').addEventListener('change', ()=>{
+    loadMyRekap();
+    loadMyStats();
+  });
+</script>
+
+</body>
+</html>

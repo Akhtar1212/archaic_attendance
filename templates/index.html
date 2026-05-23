@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Archaic Coffee Attendance</title>
+  <link rel="icon" href="{{ url_for('static', filename='favicon.png') }}"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+</head>
+<body>
+  <main class="login-body" style="text-align:center;">
+    <div class="login-wrap" style="max-width:520px;">
+      <img src="{{ url_for('static', filename='logo.png') }}" alt="Archaic" style="height:64px;filter:drop-shadow(0 0 6px rgba(212,175,55,.25));margin-bottom:8px;">
+      <h1 class="login-title" style="margin-top:0;">Archaic Coffee Attendance</h1>
+      <div style="opacity:.8;margin-top:-8px;margin-bottom:16px;">Presensi Otomatis Berbasis Wajah</div>
+      <div style="display:flex;gap:10px;justify-content:center;">
+        <a class="btn gold" href="{{ url_for('admin_page') }}">Portal Admin</a>
+        <a class="btn" href="{{ url_for('pegawai_page') }}">Portal Pegawai</a>
+      </div>
+      <div style="margin-top:18px;font-size:.9rem;opacity:.7;">© 2025 Archaic Coffee — Face Recognition</div>
+    </div>
+  </main>
+</body>
+</html>

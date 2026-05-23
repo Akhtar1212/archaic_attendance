@@ -1,0 +1,549 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* ========= VARIABEL UTAMA ========= */
+:root {
+  --gold: #d4af37;
+  --gold-soft: rgba(212, 175, 55, 0.15);
+  --gold-strong: rgba(212, 175, 55, 0.35);
+  --dark: #050507;
+  --dark-elevated: #0c0c10;
+  --dark-soft: #141419;
+  --gray: #1b1b1f;
+  --light: #f5f5f5;
+}
+
+/* ========= RESET & BODY ========= */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  color: var(--light);
+  font-family: 'Poppins', sans-serif;
+  background:
+    radial-gradient(circle at top, rgba(212,175,55,0.22) 0, transparent 55%),
+    radial-gradient(circle at bottom, rgba(212,175,55,0.10) 0, transparent 60%),
+    #050507;
+  background-attachment: fixed;
+}
+
+/* ========= LINK & BUTTON ========= */
+
+a {
+  color: var(--gold);
+  text-decoration: none;
+  transition: opacity .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+
+a:hover {
+  opacity: 0.9;
+}
+
+.btn {
+  background: rgba(0, 0, 0, 0.2);
+  color: var(--light);
+  border: 1px solid var(--gold);
+  padding: 9px 18px;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, opacity 0.18s ease;
+}
+
+.btn.gold {
+  background: linear-gradient(135deg, #f9d976, #f39f31);
+  color: #151515;
+  border-color: transparent;
+  box-shadow: 0 0 0 rgba(0,0,0,0);
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.45);
+  opacity: 0.96;
+}
+
+.btn.gold:hover {
+  box-shadow: 0 8px 22px rgba(243, 159, 49, 0.45);
+}
+
+/* ========= TOPBAR / HEADER GLOBAL ========= */
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 30px;
+  background: rgba(5, 5, 7, 0.96);
+  border-bottom: 1px solid rgba(212,175,55,0.16);
+  backdrop-filter: blur(18px);
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.topbar-stack {
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--gold);
+}
+
+.topbar-subtitle {
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+
+/* Logo kecil di header */
+.logo-small {
+  height: 28px;
+  width: auto;
+  display: inline-block;
+  filter: drop-shadow(0 0 4px rgba(212,175,55,0.35));
+}
+
+/* ========= LAYOUT MAIN (DASHBOARD) ========= */
+
+.layout-main {
+  max-width: 1200px;
+  margin: 24px auto 40px;
+  padding: 0 18px 40px;
+}
+
+/* GRID UTAMA DASHBOARD */
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1.1fr 1.1fr;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+@media (max-width: 960px) {
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ========= CARD / PANEL ========= */
+
+.card {
+  background: radial-gradient(circle at top left, rgba(212,175,55,0.14) 0, transparent 55%),
+              rgba(12, 12, 16, 0.96);
+  border-radius: 18px;
+  padding: 16px 18px 18px;
+  border: 1px solid rgba(212,175,55,0.14);
+  box-shadow: 0 18px 45px rgba(0,0,0,0.65);
+  backdrop-filter: blur(18px);
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg,
+              rgba(212,175,55,0.22) 0,
+              transparent 35%,
+              transparent 100%);
+  opacity: 0.08;
+  pointer-events: none;
+}
+
+.card h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--gold);
+}
+
+.card-subtitle {
+  margin: 4px 0 0;
+  font-size: 0.78rem;
+  opacity: 0.7;
+}
+
+.card-header-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+/* ========= FORM & INPUT ========= */
+
+.form-inline {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+input,
+select {
+  background: #121219;
+  color: #f8f8f8;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 8px 11px;
+  font-family: inherit;
+  font-size: 0.86rem;
+  outline: none;
+  min-width: 0;
+  transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+}
+
+input:focus,
+select:focus {
+  border-color: rgba(212,175,55,0.85);
+  box-shadow: 0 0 0 1px rgba(212,175,55,0.35);
+  background: #181822;
+}
+
+/* ========= STATISTIK KARTU ========= */
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+@media (max-width: 880px) {
+  .stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .stat-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.stat-card {
+  background: rgba(9,9,12,0.92);
+  border-radius: 14px;
+  padding: 8px 11px;
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.55);
+}
+
+.stat-label {
+  font-size: 0.7rem;
+  opacity: 0.7;
+}
+
+.stat-value {
+  margin-top: 3px;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+/* ========= TABLE / REKAP ========= */
+
+.table-wrapper {
+  margin-top: 10px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+table.rekap {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+}
+
+table.rekap thead {
+  background: rgba(14,14,19,0.96);
+}
+
+table.rekap th,
+table.rekap td {
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  padding: 7px 9px;
+  text-align: left;
+}
+
+table.rekap th {
+  color: var(--gold);
+  font-weight: 500;
+}
+
+table.rekap tbody tr:hover {
+  background: rgba(212,175,55,0.06);
+}
+
+/* ========= PILLS, BADGE ========= */
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  border: 1px solid rgba(255,255,255,0.18);
+}
+
+.pill-gold {
+  background: rgba(212,175,55,0.18);
+  border-color: rgba(212,175,55,0.55);
+  color: var(--gold);
+}
+
+/* ========= KAMERA LIVE ========= */
+
+.live-wrapper {
+  margin-top: 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.06);
+  overflow: hidden;
+  background: radial-gradient(circle at top, rgba(212,175,55,0.15) 0, transparent 65%),
+              rgba(5,5,7,0.96);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 170px;
+}
+
+.live-wrapper img {
+  max-width: 100%;
+  display: block;
+}
+
+.small-pre {
+  font-size: 0.75rem;
+  background: #0b0b11;
+  color: #ddd;
+  padding: 6px 8px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.06);
+  max-height: 80px;
+  overflow: auto;
+}
+
+/* ========= POPUP NOTIF ========= */
+
+.popup {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #f9d976, #f39f31);
+  color: #151515;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-weight: 600;
+  box-shadow: 0 18px 35px rgba(0,0,0,0.55);
+  display: none;
+  z-index: 999;
+}
+
+/* ========= HERO / LANDING ========= */
+
+.hero {
+  padding: 40px 20px 50px;
+  text-align: center;
+}
+
+.hero-title {
+  font-size: 1.9rem;
+  font-weight: 600;
+  margin: 4px 0 4px;
+}
+
+.hero-subtitle {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.hero .btn-group {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+/* Uap di logo landing (kalau dipakai) */
+.logo-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.steam-under-logo {
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 120px;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.steam-under-logo span {
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  width: 16px;
+  height: 80px;
+  margin-left: -8px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(212,175,55,.22) 0%, rgba(0,0,0,0) 70%);
+  filter: blur(8px);
+  opacity: .28;
+  animation: rise 7.5s ease-in-out infinite;
+}
+
+.steam-under-logo span:nth-child(2){ left:42%; animation-delay:1.2s; transform:scale(.95); }
+.steam-under-logo span:nth-child(3){ left:58%; animation-delay:2.4s; transform:scale(1.05); }
+.steam-under-logo span:nth-child(4){ left:66%; animation-delay:3.6s; transform:scale(.9); }
+
+@keyframes rise {
+  0%   { transform:translateY(10px) scale(1); opacity:.15; }
+  35%  { transform:translateY(-60px) scale(1.15); opacity:.45; }
+  100% { transform:translateY(-140px) scale(.9); opacity:0; }
+}
+
+/* ========= STEAM CORNER (kalau dipakai di pegawai/admin) ========= */
+
+.steam-corner {
+  position: fixed;
+  right: 28px;
+  bottom: 28px;
+  width: 160px;
+  height: 160px;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+  opacity: .70;
+}
+
+.steam-corner span {
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  width: 18px;
+  height: 90px;
+  margin-left: -9px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(212,175,55,.18) 0%, rgba(0,0,0,0) 70%);
+  filter: blur(9px);
+  animation: steamCorner 8s ease-in-out infinite;
+  opacity: .28;
+}
+
+.steam-corner span:nth-child(2){ left: 35%; animation-delay: 1.6s; transform: scale(.9); }
+.steam-corner span:nth-child(3){ left: 65%; animation-delay: 3.2s; transform: scale(1.05); }
+
+@keyframes steamCorner {
+  0%   { transform:translateY(0) scale(1); opacity:.15; }
+  45%  { transform:translateY(-80px) scale(1.15); opacity:.45; }
+  100% { transform:translateY(-160px) scale(.9); opacity:0; }
+}
+
+/* ========= LOGIN PAGE ========= */
+
+.login-body {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:100vh;
+  text-align:center;
+  padding:20px;
+}
+
+.login-wrap {
+  width:100%;
+  max-width:420px;
+  background: rgba(12,12,18,0.96);
+  padding:28px 24px;
+  border-radius:18px;
+  box-shadow:0 24px 50px rgba(0,0,0,0.75);
+  border:1px solid rgba(212,175,55,0.16);
+}
+
+.login-title {
+  color:var(--gold);
+  margin:6px 0 10px;
+  font-size:1.6rem;
+}
+
+.login-form {
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  margin-bottom:12px;
+}
+
+.login-form input {
+  background:#15151f;
+  color:#fff;
+  border:1px solid rgba(255,255,255,0.05);
+  border-radius:10px;
+  padding:10px 12px;
+}
+
+.alert-error {
+  background:#311;
+  color:#f88;
+  border:1px solid #a33;
+  padding:8px 10px;
+  border-radius:10px;
+  margin-bottom:10px;
+  font-size:.9rem;
+}
+
+/* ========= PORTAL PEGAWAI HEADER SEDERHANA ========= */
+/* (supaya tetap match admin & landing) */
+
+header {
+  /* tidak dipakai untuk admin karena admin pakai .topbar */
+}
+
+/* ========= RESPONSIVE UMUM ========= */
+
+@media (max-width: 520px) {
+  .topbar {
+    padding: 8px 14px;
+  }
+  .topbar-left {
+    gap: 8px;
+  }
+  .layout-main {
+    padding: 0 12px 32px;
+  }
+  .card {
+    padding: 14px 14px 16px;
+  }
+}

@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Portal Admin - Archaic Coffee</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    :root {
+      --bg: #050505;
+      --bg-soft: #111111;
+      --card: #111111;
+      --card-soft: #151515;
+      --border: #2a2a2a;
+      --gold: #d4af37;
+      --gold-soft: #f3d37a;
+      --text: #f4f4f4;
+      --text-soft: #bbbbbb;
+      --danger: #e74c3c;
+      --success: #16c784;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #3b2b14 0%, #050505 55%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 32px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      background: linear-gradient(90deg, #050505 0%, #111 45%, #050505 100%);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    header .left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-small {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      object-fit: cover;
+      box-shadow: 0 0 18px rgba(0, 0, 0, 0.7);
+    }
+
+    header h1 {
+      font-size: 1.1rem;
+      margin: 0;
+    }
+
+    header .subtitle {
+      font-size: 0.75rem;
+      color: var(--text-soft);
+      margin-top: 2px;
+    }
+
+    header .right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 20px auto 40px;
+      padding: 0 16px 40px;
+    }
+
+    .card {
+      background: radial-gradient(circle at top left, #1b1b1b 0%, #101010 55%);
+      border-radius: 16px;
+      border: 1px solid rgba(212, 175, 55, 0.12);
+      box-shadow: 0 22px 40px rgba(0, 0, 0, 0.8);
+      padding: 16px 18px 14px;
+      color: var(--text);
+    }
+
+    .card-soft {
+      background: #121212;
+      border-radius: 16px;
+      border: 1px solid #252525;
+      padding: 16px 18px 14px;
+      box-shadow: 0 18px 32px rgba(0, 0, 0, 0.7);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .card-title {
+      font-size: 0.98rem;
+      font-weight: 600;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .card-title span.icon {
+      font-size: 1.1rem;
+    }
+
+    .card-sub {
+      font-size: 0.8rem;
+      color: var(--text-soft);
+      margin-top: 2px;
+    }
+
+    .section-spacing {
+      margin-top: 18px;
+    }
+
+    .btn {
+      border-radius: 999px;
+      border: 1px solid #333;
+      background: #181818;
+      color: var(--text);
+      font-size: 0.8rem;
+      padding: 5px 12px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn:hover {
+      background: #222;
+    }
+
+    .btn.gold {
+      background: linear-gradient(135deg, #f3d37a 0%, #d4af37 55%, #b7860b 100%);
+      color: #111;
+      border-color: #b7860b;
+      font-weight: 600;
+    }
+
+    .btn.gold:hover {
+      filter: brightness(1.05);
+    }
+
+    .btn.danger {
+      background: #3a1815;
+      border-color: #8b2c24;
+      color: #ffb3a7;
+    }
+
+    .btn.small {
+      padding: 4px 10px;
+      font-size: 0.75rem;
+    }
+
+    .form-inline {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    input[type="month"],
+    input[type="date"],
+    select {
+      background: #181818;
+      border-radius: 999px;
+      border: 1px solid #2a2a2a;
+      padding: 4px 10px;
+      color: #f5f5f5;
+      font-size: 0.8rem;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      background: #181818;
+      border-radius: 8px;
+      border: 1px solid #2a2a2a;
+      padding: 6px 10px;
+      color: #f5f5f5;
+      font-size: 0.8rem;
+    }
+
+    /* QUOTE CARD */
+    .quote-text {
+      font-size: 1.05rem;
+      text-align: center;
+      margin: 4px 0 2px;
+    }
+
+    .quote-sub {
+      font-size: 0.8rem;
+      text-align: center;
+      color: var(--text-soft);
+    }
+
+    /* CAMERA + ENROLL */
+    .cam-enroll-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 980px) {
+      .cam-enroll-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .cam-wrapper {
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid #252525;
+      background: radial-gradient(circle at top, #333 0%, #050505 60%);
+      position: relative;
+    }
+
+    .cam-wrapper img {
+      width: 100%;
+      display: block;
+      object-fit: cover;
+      height: 360px;
+    }
+
+    .cam-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-top: 6px;
+      font-size: 0.8rem;
+      color: var(--text-soft);
+    }
+
+    .status-pill {
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid #2a2a2a;
+      font-size: 0.75rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-pill dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      display: inline-block;
+      background: #f0c419;
+    }
+
+    .status-ready dot {
+      background: var(--success);
+    }
+
+    .status-error dot {
+      background: var(--danger);
+    }
+
+    .small-note {
+      font-size: 0.78rem;
+      color: var(--text-soft);
+      margin-top: 4px;
+    }
+
+    /* ========================================= */
+    /* REVISI BAGIAN TABEL (SCROLL)              */
+    /* ========================================= */
+    .table-wrap {
+      margin-top: 10px;
+      border-radius: 12px;
+      overflow: auto; /* REVISI: diubah dari hidden ke auto */
+      border: 1px solid #262626;
+      max-height: 400px; /* REVISI: ditambah tingginya */
+    }
+
+    .table-wrap.tall {
+      max-height: 250px; /* REVISI: Rekap bulanan sekarang lebih tinggi dan bisa scroll */
+      overflow-y: auto;
+      border: 1px solid #262626;
+    }
+
+    /* Mempercantik Scrollbar di Dark Mode */
+    .table-wrap::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    .table-wrap::-webkit-scrollbar-track {
+      background: #111;
+    }
+    .table-wrap::-webkit-scrollbar-thumb {
+      background: #333;
+      border-radius: 4px;
+    }
+    .table-wrap::-webkit-scrollbar-thumb:hover {
+      background: var(--gold);
+    }
+
+    table.rekap {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+
+    table.rekap th,
+    table.rekap td {
+      border: 1px solid #262626;
+      padding: 8px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+  table.rekap th {
+    background: #181818;
+    color: var(--gold);
+    position: sticky; /* Membuat header tetap di atas saat di-scroll */
+    top: 0;
+    z-index: 10;
+    border-bottom: 2px solid var(--border);
+    }
+
+    table.rekap tr:nth-child(even) td {
+      background: #121212;
+    }
+
+    table.rekap a {
+      color: var(--gold-soft);
+      text-decoration: underline;
+      text-decoration-style: dotted;
+    }
+    /* ========================================= */
+
+    /* POPUP NOTIF */
+    .popup {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      background: #181818;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.78rem;
+      color: var(--text);
+      border: 1px solid rgba(212, 175, 55, 0.6);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.7);
+      display: none;
+      z-index: 999;
+    }
+
+    /* MODAL SET LOGIN */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .modal-card {
+      background: #151515;
+      border-radius: 14px;
+      padding: 18px 20px;
+      width: 320px;
+      max-width: 92vw;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.85);
+      border: 1px solid #333;
+    }
+
+    .modal-card h3 {
+      font-size: 1rem;
+      margin: 0 0 6px;
+    }
+
+    .form-vertical {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-vertical label {
+      font-size: 0.8rem;
+      color: var(--text-soft);
+    }
+
+    .modal-card input {
+      width: 100%;
+      background: #1a1a1a;
+      border-radius: 8px;
+      border: 1px solid #2a2a2a;
+      padding: 7px 9px;
+      color: #fff;
+      font-size: 0.85rem;
+    }
+
+    /* TREND CHART */
+    #trendChart {
+      max-height: 260px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="left">
+    <img src="{{ url_for('static', filename='logo.png') }}" class="logo-small" alt="Archaic">
+    <div>
+      <h1>Portal Admin</h1>
+      <div class="subtitle">Archaic Coffee — Attendance Dashboard</div>
+    </div>
+  </div>
+  <div class="right">
+    <button class="btn gold" onclick="window.location.href='/logout'">Logout</button>
+  </div>
+</header>
+
+<main>
+  <section class="card">
+    <div class="card-title" style="justify-content:center;">
+      <span class="icon">💬</span>
+      <span>Quote Hari Ini</span>
+    </div>
+    <div class="quote-text" id="quoteMain">Datang on-time adalah bentuk respect ke rekan kerja.</div>
+    <div class="quote-sub" id="quoteSub">Semua orang di shift mengandalkan satu sama lain.</div>
+  </section>
+
+  <section class="card section-spacing">
+    <div class="card-title">
+      <span class="icon">📷</span>
+      <span>Kamera &amp; Tambah Pegawai + Capture Dataset</span>
+    </div>
+    <div class="card-sub">
+      Gunakan untuk cek sudut kamera &amp; capture dataset wajah pegawai baru.
+    </div>
+
+    <div class="cam-enroll-grid" style="margin-top:10px;">
+      <div>
+        <div class="cam-wrapper">
+          <img id="camStream" src="" alt="Camera stream">
+        </div>
+        <div class="cam-footer">
+          <div class="status-pill status-wait" id="camStatusPill">
+            <dot></dot>
+            <span id="camStatusText">Live belum berjalan.</span>
+          </div>
+          <div style="font-size:0.78rem; color:#999;">
+            Kamera akan menampilkan kotak wajah jika tracking berhasil. Cocokkan posisi sebelum capture dataset.
+          </div>
+        </div>
+        <div class="form-inline" style="margin-top:8px; justify-content:space-between;">
+          <div class="form-inline">
+            <span style="font-size:0.78rem; color:#aaa;">Index</span>
+            <input type="number" id="camIndex" value="0" min="0" max="5" style="max-width:80px;">
+            <button class="btn small" onclick="scanCamera()">Scan Kamera</button>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button class="btn gold small" onclick="startCamera()">Start Live</button>
+            <button class="btn small" onclick="stopCamera()">Stop Live</button>
+          </div>
+        </div>
+        <div class="small-note" id="camScanInfo" style="margin-top:6px;">
+          Belum scan device.
+        </div>
+      </div>
+
+      <div class="card-soft">
+        <div class="card-title" style="margin-bottom:6px;">
+          <span class="icon">➕</span>
+          <span>Tambah Pegawai + Capture Dataset</span>
+        </div>
+        <div class="card-sub">
+          Pegawai baru otomatis dibuat ID-nya, dataset wajah dicapture, lalu model face recognition dilatih ulang.
+        </div>
+
+        <div class="form-vertical" style="margin-top:10px; gap:10px;">
+          <div>
+            <label for="empNama">Nama Pegawai</label>
+            <input type="text" id="empNama" placeholder="Nama lengkap">
+          </div>
+          <div>
+            <label for="empJabatan">Jabatan</label>
+            <select id="empJabatan">
+              <option value="Kasir">Kasir</option>
+              <option value="Barista">Barista</option>
+              <option value="Chef">Chef</option>
+              <option value="Waitress">Waitress</option>
+            </select>
+          </div>
+          <div>
+            <label for="empCount">Jumlah capture</label>
+            <input type="number" id="empCount" value="40" min="10" max="120" style="max-width:120px;">
+          </div>
+        </div>
+
+        <div style="display:flex; gap:8px; margin-top:14px;">
+          <button class="btn gold" onclick="tambahPegawai()">Tambah + Capture</button>
+          <button class="btn" onclick="manualTrain()">Train Manual</button>
+        </div>
+
+        <div class="small-note" style="margin-top:6px;">
+          Setelah capture berhasil, model akan otomatis di-train ulang.
+        </div>
+        <div class="small-note" id="empInfo" style="margin-top:4px; color:#f3d37a;"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card-soft section-spacing">
+    <div class="card-header">
+      <div>
+        <div class="card-title">
+          <span class="icon">👥</span>
+          <span>Daftar Pegawai</span>
+        </div>
+        <div class="card-sub">
+          Set login untuk portal pegawai, atau lakukan resign.
+        </div>
+      </div>
+      <button class="btn small" onclick="loadEmployees()">Refresh</button>
+    </div>
+
+    <div class="table-wrap">
+      <table class="rekap">
+        <thead>
+          <tr>
+            <th style="width:70px;">ID</th>
+            <th>Nama</th>
+            <th>Jabatan</th>
+            <th style="width:80px;">Status</th>
+            <th style="width:150px;">Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="tblPegawaiBody">
+          <tr><td colspan="5">Memuat...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card-soft section-spacing">
+    <div class="card-header">
+      <div>
+        <div class="card-title">
+          <span class="icon">📅</span>
+          <span>Rekap Harian</span>
+        </div>
+        <div class="card-sub">
+          Rekap tanggal tertentu: jam masuk, jam pulang, dan status.
+        </div>
+      </div>
+      <div class="form-inline">
+        <input type="date" id="harianDate">
+        <button class="btn small" onclick="renderRekapHarian()">Muat</button>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table class="rekap">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nama</th>
+            <th>Jabatan</th>
+            <th>Masuk</th>
+            <th>Pulang</th>
+            <th>Status</th>
+            <th>Izin</th>
+            <th>Cuti</th>
+            <th>Terlambat</th>
+            <th>Bukti In</th>
+            <th>Bukti Out</th>
+          </tr>
+        </thead>
+        <tbody id="tblHarianBody">
+          <tr><td colspan="11">Memuat...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card-soft section-spacing">
+    <div class="card-header">
+      <div>
+        <div class="card-title">
+          <span class="icon">🗓️</span>
+          <span>Rekap Bulanan</span>
+        </div>
+        <div class="card-sub">
+          Gunakan scroll untuk melihat hari-hari lainnya.
+        </div>
+      </div>
+      <div class="form-inline">
+        <input type="month" id="bulanRekap">
+        <button class="btn small" onclick="loadMonthRekap()">Muat</button>
+        <button class="btn small" onclick="exportExcel()">Excel</button>
+        <button class="btn small" onclick="exportPdf()">PDF</button>
+      </div>
+    </div>
+
+    <div class="table-wrap tall">
+      <table class="rekap">
+        <thead>
+          <tr>
+            <th style="width:40px;">ID</th>
+            <th style="width:70px;">ID Pegawai</th>
+            <th>Nama</th>
+            <th>Jabatan</th>
+            <th>Tanggal</th>
+            <th>Masuk</th>
+            <th>Pulang</th>
+            <th>Status</th>
+            <th>Bukti In</th>
+            <th>Bukti Out</th>
+          </tr>
+        </thead>
+        <tbody id="tblBulananBody">
+          <tr><td colspan="10">Memuat...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card-soft section-spacing">
+    <div class="card-header">
+      <div>
+        <div class="card-title">
+          <span class="icon">✅</span>
+          <span>Approval Izin / Cuti / Terlambat</span>
+        </div>
+      </div>
+      <div class="form-inline">
+        <input type="month" id="bulanIzin">
+        <button class="btn small" onclick="loadIzin()">Muat</button>
+      </div>
+    </div>
+
+    <div class="table-wrap tall">
+      <table class="rekap">
+        <thead>
+          <tr>
+            <th style="width:30px;">#</th>
+            <th style="width:80px;">ID Pegawai</th>
+            <th>Nama</th>
+            <th>Jabatan</th>
+            <th>Tanggal</th>
+            <th>Jenis</th>
+            <th>Alasan</th>
+            <th>Status</th>
+            <th style="width:150px;">Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="tblIzinBody">
+          <tr><td colspan="9">Memuat...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card-soft section-spacing">
+    <div class="card-header">
+      <div class="card-title">
+        <span class="icon">📈</span>
+        <span>Tren On-time vs Telat (Harian)</span>
+      </div>
+      <div class="form-inline">
+        <input type="month" id="bulanTrend">
+        <button class="btn small" onclick="loadTrend()">Muat</button>
+      </div>
+    </div>
+    <div style="height:260px;">
+      <canvas id="trendChart"></canvas>
+    </div>
+  </section>
+</main>
+
+<div id="popup" class="popup"></div>
+
+<div id="loginModal" class="modal-backdrop">
+  <div class="modal-card">
+    <h3>Set Login Pegawai</h3>
+    <p id="loginModalEmp" style="font-size:0.9rem; color:#ccc; margin-bottom:10px;">Untuk: -</p>
+    <div class="form-vertical">
+      <label for="loginUsername">Username</label>
+      <input type="text" id="loginUsername" placeholder="Username pegawai">
+      <label for="loginPassword">Password</label>
+      <input type="password" id="loginPassword" placeholder="Password pegawai">
+    </div>
+    <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:14px;">
+      <button class="btn" onclick="closeLoginModal()">Batal</button>
+      <button class="btn gold" onclick="submitSetLogin()">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Seluruh script JavaScript Anda tetap sama, tidak ada yang perlu diubah.
+  // Script asli Anda sudah cukup untuk menangani data.
+  // Perubahan scroll ditangani sepenuhnya oleh CSS di atas.
+
+  function showNotif(msg) {
+    const p = document.getElementById('popup');
+    if (!p) { alert(msg); return; }
+    p.textContent = msg;
+    p.style.display = 'block';
+    setTimeout(() => { p.style.display = 'none'; }, 2600);
+  }
+
+  const QUOTES = [
+    ["Datang on-time adalah bentuk respect ke rekan kerja.", "Semua orang di shift mengandalkan satu sama lain."],
+    ["Tepat waktu itu gratis, tapi efeknya mahal.", "Tim yang disiplin hari ini membangun reputasi besar besok."],
+    ["Datang tepat waktu itu kecil, tapi efeknya besar untuk tim.", "Disiplin kecil hari ini jadi budaya besar besok."],
+    ["Kerja rapi dimulai dari hadir tepat waktu.", "Konsistensi lebih penting daripada sekali-sekali heroik."]
+  ];
+
+  function setQuote() {
+    const today = new Date();
+    const idx = today.getDate() % QUOTES.length;
+    document.getElementById('quoteMain').textContent = QUOTES[idx][0];
+    document.getElementById('quoteSub').textContent = QUOTES[idx][1];
+  }
+
+  let camStarted = false;
+  function setCamStatus(text, type) {
+    const pill = document.getElementById('camStatusPill');
+    const span = document.getElementById('camStatusText');
+    span.textContent = text || '';
+    pill.classList.remove('status-ready', 'status-error');
+    if (type === 'ready') pill.classList.add('status-ready');
+    else if (type === 'error') pill.classList.add('status-error');
+  }
+
+  function startCamera() {
+    const idx = parseInt(document.getElementById('camIndex').value || '0', 10);
+    fetch('/camera/start', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ index: idx })
+    })
+    .then(r => r.json())
+    .then(d => {
+      if (!d.ok) {
+        setCamStatus(d.error || d.message || 'Gagal membuka kamera', 'error');
+        showNotif(d.error || d.message || 'Gagal membuka kamera');
+        return;
+      }
+      camStarted = true;
+      document.getElementById('camStream').src = '/camera/live?ts=' + Date.now();
+      setCamStatus(d.message || 'Live dimulai', 'ready');
+      showNotif(d.message || 'Kamera aktif');
+    })
+    .catch(() => {
+      setCamStatus('Gagal mengakses kamera', 'error');
+      showNotif('Tidak bisa mengakses kamera.');
+    });
+  }
+
+  function stopCamera() {
+    fetch('/camera/stop', { method: 'POST' })
+    .then(() => {
+      camStarted = false;
+      setCamStatus('Live dihentikan', '');
+      showNotif('Live kamera dihentikan.');
+    })
+    .catch(() => { showNotif('Gagal menghentikan kamera.'); });
+  }
+
+  function scanCamera() {
+    fetch('/camera/scan')
+    .then(r => r.json())
+    .then(d => {
+      const devs = d.devices || [];
+      if (!devs.length) {
+        document.getElementById('camScanInfo').textContent = 'Tidak ada kamera terdeteksi.';
+        return;
+      }
+      document.getElementById('camScanInfo').textContent = devs.map(v => `index ${v.index}`).join(' | ');
+    });
+  }
+
+  function tambahPegawai() {
+    const nama = document.getElementById('empNama').value.trim();
+    const jab = document.getElementById('empJabatan').value;
+    const count = parseInt(document.getElementById('empCount').value || '40', 10);
+    if (!nama || !camStarted) { showNotif('Nama wajib diisi & kamera harus aktif.'); return; }
+    document.getElementById('empInfo').textContent = 'Memulai capture dataset...';
+    fetch('/enroll/start', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nama: nama, jabatan: jab, count: count })
+    })
+    .then(r => r.json())
+    .then(d => {
+      document.getElementById('empInfo').textContent = d.message;
+      loadEmployees();
+      loadMonthRekap();
+    });
+  }
+
+  function manualTrain() {
+    fetch('/train').then(r => r.json()).then(d => { showNotif(d.message); });
+  }
+
+  let loginEmpId = null;
+  function openLoginModal(empId, nama) {
+    loginEmpId = empId;
+    document.getElementById('loginModalEmp').textContent = `Untuk ${nama} (${empId})`;
+    document.getElementById('loginModal').style.display = 'flex';
+  }
+  function closeLoginModal() { document.getElementById('loginModal').style.display = 'none'; }
+
+  function submitSetLogin() {
+    const u = document.getElementById('loginUsername').value;
+    const p = document.getElementById('loginPassword').value;
+    fetch('/pegawai/set_login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id_pegawai: loginEmpId, username: u, password: p })
+    }).then(r => r.json()).then(d => { showNotif(d.message); closeLoginModal(); });
+  }
+
+  function doResign(idp, nama) {
+    if (!confirm(`Yakin ingin RESIGN-kan ${nama}?`)) return;
+    fetch('/pegawai/resign', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id_pegawai: idp })
+    }).then(r => r.json()).then(d => { showNotif(d.message); loadEmployees(); });
+  }
+
+  function loadEmployees() {
+    fetch('/employees').then(r => r.json()).then(rows => {
+      const tbody = document.getElementById('tblPegawaiBody');
+      tbody.innerHTML = rows.map(r => `
+        <tr>
+          <td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td>
+          <td>
+            <button class="btn small" onclick="openLoginModal('${r[0]}','${r[1]}')">Set Login</button>
+            <button class="btn small danger" onclick="doResign('${r[0]}','${r[1]}')">Resign</button>
+          </td>
+        </tr>`).join('');
+    });
+  }
+
+  let monthCache = [];
+  function normalizeProofPath(val) { return val ? (val.startsWith('proofs/') ? '/' + val : '/proofs/' + val) : ''; }
+
+  function loadMonthRekap() {
+    const bulan = document.getElementById('bulanRekap').value || new Date().toISOString().slice(0, 7);
+    fetch('/rekap_month_with_proof?month=' + encodeURIComponent(bulan))
+    .then(r => r.json())
+    .then(rows => {
+      monthCache = rows || [];
+      renderBulanan();
+      renderRekapHarian();
+    });
+  }
+
+  function renderBulanan() {
+    const tbody = document.getElementById('tblBulananBody');
+    if (!monthCache.length) { tbody.innerHTML = '<tr><td colspan="10">Data Kosong</td></tr>'; return; }
+    tbody.innerHTML = monthCache.map(r => `
+      <tr>
+        <td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td>
+        <td>${r[5] || '-'}</td><td>${r[6] || '-'}</td><td>${r[7]}</td>
+        <td>${r[8] ? `<a href="${normalizeProofPath(r[8])}" target="_blank">Lihat</a>` : '-'}</td>
+        <td>${r[9] ? `<a href="${normalizeProofPath(r[9])}" target="_blank">Lihat</a>` : '-'}</td>
+      </tr>`).join('');
+  }
+
+  function renderRekapHarian() {
+    const tbody = document.getElementById('tblHarianBody');
+    const tgl = document.getElementById('harianDate').value || new Date().toISOString().slice(0, 10);
+    const filtered = monthCache.filter(r => r[4] === tgl);
+    if (!filtered.length) { tbody.innerHTML = '<tr><td colspan="11">Data Kosong</td></tr>'; return; }
+    tbody.innerHTML = filtered.map(r => `
+      <tr>
+        <td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[5] || '-'}</td><td>${r[6] || '-'}</td>
+        <td>${r[7]}</td><td>0</td><td>0</td><td>${r[7] === 'Terlambat' ? 1 : 0}</td>
+        <td>${r[8] ? `<a href="${normalizeProofPath(r[8])}" target="_blank">Lihat</a>` : '-'}</td>
+        <td>${r[9] ? `<a href="${normalizeProofPath(r[9])}" target="_blank">Lihat</a>` : '-'}</td>
+      </tr>`).join('');
+  }
+
+  function exportExcel() { window.open('/export_excel?month=' + document.getElementById('bulanRekap').value); }
+  function exportPdf() { window.open('/export_pdf?month=' + document.getElementById('bulanRekap').value); }
+
+  function loadIzin() {
+    const bulan = document.getElementById('bulanIzin').value || new Date().toISOString().slice(0, 7);
+    fetch('/izin/list?month=' + encodeURIComponent(bulan)).then(r => r.json()).then(rows => {
+      const tbody = document.getElementById('tblIzinBody');
+      tbody.innerHTML = rows.map((r, idx) => `
+        <tr>
+          <td>${idx + 1}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td><td>${r[6]}</td><td>${r[7]}</td>
+          <td>${r[7] === 'Menunggu' ? `<button class="btn small" onclick="approveIzin(${r[0]})">Setujui</button>` : '-'}</td>
+        </tr>`).join('');
+    });
+  }
+
+  function approveIzin(id) { fetch('/izin/approve', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: id }) }).then(() => loadIzin()); }
+
+  let trendChart = null;
+  function loadTrend() {
+    const bulan = document.getElementById('bulanTrend').value || new Date().toISOString().slice(0, 7);
+    fetch('/trend/month_summary?month=' + encodeURIComponent(bulan)).then(r => r.json()).then(rows => {
+      const ctx = document.getElementById('trendChart').getContext('2d');
+      if (trendChart) trendChart.destroy();
+      trendChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: rows.map(r => r.date.slice(-2)),
+          datasets: [
+            { label: 'Tepat Waktu', data: rows.map(r => r.ontime), borderColor: '#16c784', tension: 0.2 },
+            { label: 'Terlambat', data: rows.map(r => r.late), borderColor: '#e74c3c', tension: 0.2 }
+          ]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#fff' } } } }
+      });
+    });
+  }
+
+  function initAdmin() {
+    setQuote();
+    const now = new Date().toISOString();
+    document.getElementById('bulanRekap').value = now.slice(0, 7);
+    document.getElementById('bulanIzin').value = now.slice(0, 7);
+    document.getElementById('bulanTrend').value = now.slice(0, 7);
+    document.getElementById('harianDate').value = now.slice(0, 10);
+    loadEmployees(); loadMonthRekap(); loadIzin(); loadTrend();
+  }
+
+  window.addEventListener('load', initAdmin);
+</script>
+
+</body>
+</html>

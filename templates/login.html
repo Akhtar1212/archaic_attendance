@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Login Admin - Archaic Coffee</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <style>
+    :root {
+      --bg: #040404;
+      --bg-soft: #111111;
+      --card: #121212;
+      --gold: #D4AF37;
+      --light: #f5f5f5;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #202020 0%, #050505 55%, #000 100%);
+      color: var(--light);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ===== TOP BAR (BACK BUTTON) ===== */
+    .top-bar {
+      position: fixed;
+      top: 20px;
+      right: 24px;
+      z-index: 20;
+    }
+
+    .btn-pill-outline {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 24px;
+      border-radius: 999px;
+      border: 1px solid var(--gold);
+      background: transparent;
+      color: var(--gold);
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease,
+                  transform 0.05s ease;
+      box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+    }
+
+    .btn-pill-outline:hover {
+      background: var(--gold);
+      color: #111;
+      box-shadow: 0 0 16px rgba(212, 175, 55, 0.45);
+      transform: translateY(-1px);
+    }
+
+    .btn-pill-outline:active {
+      transform: translateY(0);
+      box-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
+    }
+
+    /* ===== LOGIN CARD ===== */
+    .login-wrapper {
+      width: 100%;
+      padding: 24px;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .login-card {
+      width: 360px;
+      max-width: 94vw;
+      background: linear-gradient(145deg, #151515 0%, #090909 60%);
+      border-radius: 16px;
+      box-shadow:
+        0 26px 70px rgba(0, 0, 0, 0.85),
+        0 0 0 1px rgba(255, 255, 255, 0.02);
+      padding: 26px 26px 22px;
+      text-align: center;
+      position: relative;
+    }
+
+    .login-logo {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      margin: 0 auto 10px;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 22px rgba(212, 175, 55, 0.35);
+    }
+
+    .login-logo img {
+      max-width: 42px;
+      max-height: 42px;
+      display: block;
+    }
+
+    .login-title {
+      margin: 4px 0 18px;
+      font-size: 1.3rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+    }
+
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .login-input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 9px 11px;
+      border-radius: 10px;
+      border: 1px solid #262626;
+      background: #101010;
+      color: #f7f7f7;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+
+    .login-input::placeholder {
+      color: #777;
+    }
+
+    .login-input:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.45);
+      background: #111111;
+    }
+
+    .btn-gold {
+      margin-top: 4px;
+      width: 100%;
+      padding: 9px 0;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, #f4ce63 0%, #d4af37 40%, #b78a1e 100%);
+      color: #111;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      box-shadow:
+        0 10px 25px rgba(0, 0, 0, 0.9),
+        0 0 16px rgba(212, 175, 55, 0.6);
+      transition: transform 0.05s ease, box-shadow 0.15s ease, filter 0.15s ease;
+    }
+
+    .btn-gold:hover {
+      filter: brightness(1.04);
+      box-shadow:
+        0 16px 32px rgba(0, 0, 0, 0.95),
+        0 0 22px rgba(212, 175, 55, 0.7);
+      transform: translateY(-1px);
+    }
+
+    .btn-gold:active {
+      transform: translateY(0);
+      box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.9),
+        0 0 18px rgba(212, 175, 55, 0.6);
+    }
+
+    .login-hint {
+      margin-top: 14px;
+      font-size: 0.78rem;
+      color: #aaaaaa;
+    }
+
+    .login-hint span {
+      color: var(--gold);
+    }
+
+    @media (max-width: 480px) {
+      .top-bar {
+        right: 14px;
+        top: 14px;
+      }
+      .login-card {
+        padding: 22px 20px 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Tombol Kembali ke halaman pilihan portal -->
+  <div class="top-bar">
+    <a href="{{ url_for('home') }}" class="btn-pill-outline">Kembali</a>
+  </div>
+
+  <div class="login-wrapper">
+    <div class="login-card">
+      <div class="login-logo">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Archaic Coffee">
+      </div>
+      <h1 class="login-title">Login Admin</h1>
+
+      {% if error %}
+        <div style="background:#3b1c1c; border:1px solid #8b2d2d; color:#f8d7da; padding:6px 10px; border-radius:8px; font-size:0.8rem; margin-bottom:8px;">
+          {{ error }}
+        </div>
+      {% endif %}
+
+      <form method="post" class="login-form">
+        <input
+          type="text"
+          name="username"
+          class="login-input"
+          placeholder="Username"
+          autocomplete="username"
+          required
+        >
+        <input
+          type="password"
+          name="password"
+          class="login-input"
+          placeholder="Password"
+          autocomplete="current-password"
+          required
+        >
+        <button type="submit" class="btn-gold">Masuk</button>
+      </form>
+    </div>
+  </div>
+
+</body>
+</html>
